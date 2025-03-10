@@ -17,6 +17,13 @@ then
     exit 1
 fi
 
+# Check if wget is installed
+if ! command -v wget &> /dev/null
+then
+    echo "wget is required to download lazydocker. Please install wget."
+    exit 1
+fi
+
 # Check if lazydocker is already installed
 if command -v lazydocker &> /dev/null
 then
@@ -32,28 +39,12 @@ then
 fi
 
 # Determine the architecture
-ARCH=$(uname -m)
-case "$ARCH" in
-    x86_64)
-        ARCH="amd64"
-        ;;
-    arm64)
-        ARCH="arm64"
-        ;;
-    *)
-        echo "Unsupported architecture: $ARCH"
-        exit 1
-        ;;
-esac
-
-# Determine the OS
 OS=$(uname -s)
+ARCH=$(uname -m)
 case "$OS" in
     Linux)
-        OS="Linux"
         ;;
     Darwin)
-        OS="Darwin"
         ;;
     *)
         echo "Unsupported OS: $OS"
@@ -66,11 +57,18 @@ LAZYDOCKER_VERSION=$(curl -s https://api.github.com/repos/jesseduffield/lazydock
 DOWNLOAD_URL="https://github.com/jesseduffield/lazydocker/releases/download/${LAZYDOCKER_VERSION}/lazydocker_${LAZYDOCKER_VERSION#v}_${OS}_${ARCH}.tar.gz"
 
 echo "Downloading lazydocker from $DOWNLOAD_URL"
-curl -L "$DOWNLOAD_URL" -o lazydocker.tar.gz
+rm -f lazydocker.tar.gz
+wget -q "$DOWNLOAD_URL" -O lazydocker.tar.gz
 
-# Extract the archive
-echo "Extracting lazydocker.tar.gz"
-tar -xzf lazydocker.tar.gz
+# Check if the file is empty
+if [ -s lazydocker.tar.gz ]; then
+  # Extract the archive
+  echo "Extracting lazydocker.tar.gz"
+  tar -xzf lazydocker.tar.gz
+else
+  echo "Error: lazydocker.tar.gz is empty"
+  exit 1
+fi
 
 # Install lazydocker
 echo "Installing lazydocker"
