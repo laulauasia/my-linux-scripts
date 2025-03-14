@@ -1,0 +1,1 @@
+rsync -azvprP "/Users/laulau/Library/CloudStorage/GoogleDrive-laulau.asia@gmail.com/My Drive/" "/Users/laulau/Library/CloudStorage/GoogleDrive-adversos.media@granitebay.shop/My Drive/laulau.backup/"
